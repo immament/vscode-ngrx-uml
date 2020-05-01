@@ -1,9 +1,7 @@
 # Change Log
 
-All notable changes to the "ngrx-uml" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
 
 - Initial release
+
+[Keep a Changelog](http://keepachangelog.com/)
