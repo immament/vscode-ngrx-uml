@@ -14,7 +14,31 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"label": "npm: watch",
+			"detail": "tsc -watch -p ./"
+		},
+		{
+			"type": "npm",
+			"script": "compile",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: compile",
+			"detail": "tsc -p ./"
+		},
+		{
+			"type": "npm",
+			"script": "webpack-dev",
+			"problemMatcher": [],
+			"label": "npm: webpack-dev",
+			"detail": "webpack --mode development --watch"
+		},
+		{
+			"type": "npm",
+			"script": "webpack",
+			"problemMatcher": [],
+			"label": "npm: webpack",
+			"detail": "webpack --mode development"
 		}
 	]
 }

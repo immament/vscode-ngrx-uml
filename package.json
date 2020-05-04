@@ -10,28 +10,111 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [
-		"onCommand:ngrx-uml.diagram"
-	],
 	"main": "./dist/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "ngrx-uml.diagram",
-				"title": "Diagram"
-			}
-		]
-	},
 	"scripts": {
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
+		"pretest": "npm run compile && npm run webpack && npm run lint",
 		"test": "node ./out/test/runTest.js",
 		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
 		"test-compile": "tsc -p ./"
+	},
+	"activationEvents": [
+		"onCommand:ngrx-uml.diagram",
+		"*"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "ngrx-uml.diagram",
+				"title": "NgrxUml: Diagram"
+			}
+		],
+		"configuration": {
+			"title": "NgrxUml",
+			"properties": {
+				"ngrxUml.input.workspaceFolder": {
+					"type": "string",
+					"description": "Default workspace folder."
+				},
+				"ngrxUml.input.includeFiles": {
+					"type": "string",
+					"default": "**/*.ts",
+					"description": "Glob-like file pattern specifying the filepath for the source files. Relative to baseDir."
+				},
+				"ngrxUml.input.ignoreFiles": {
+					"type": "array",
+					"default": [
+						"**/*.spec.ts",
+						"**/node_modules/**"
+					],
+					"description": "Glob-like file pattern specifying files to ignore."
+				},
+				"ngrxUml.input.tsConfigFile": {
+					"type": "string",
+					"default": "tsconfig.json",
+					"description": "tsconfig.json file name with relative path from baseDir."
+				},
+				"ngrxUml.output.generateDiagramImages": {
+					"type": "boolean",
+					"default": false,
+					"description": "Generate Diagram images."
+				},
+				"ngrxUml.output.imageFormat": {
+					"type": "string",
+					"enum": [
+						"eps",
+						"latex",
+						"png",
+						"svg",
+						"txt"
+					],
+					"default": "png",
+					"description": "Generate Diagram images."
+				},
+				"ngrxUml.output.outDir": {
+					"type": "string",
+					"default": "out",
+					"description": "Redirect output structure to the directory."
+				},
+				"ngrxUml.output.generateJsonFiles": {
+					"type": "boolean",
+					"default": false,
+					"description": "Generate intermediate files to json."
+				},
+				"ngrxUml.output.generateWsdFiles": {
+					"type": "boolean",
+					"default": true,
+					"description": "Generate plant uml file (.wsd)."
+				},
+				"ngrxUml.general.clickableLinks": {
+					"type": "boolean",
+					"default": true,
+					"description": "Convert terminal links to clickable in vs code terminal."
+				},
+				"ngrxUml.general.logLevel": {
+					"type": "string",
+					"enum": [
+						"TRACE",
+						"DEBUG",
+						"INFO",
+						"WARN",
+						"ERROR",
+						"SILENT"
+					],
+					"default": "INFO",
+					"description": "Log level"
+				},
+				"ngrxUml.general.showStatusBar": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show status bar item."
+				}
+			}
+		}
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
@@ -40,6 +123,7 @@
 		"@types/vscode": "^1.44.0",
 		"@typescript-eslint/eslint-plugin": "^2.26.0",
 		"@typescript-eslint/parser": "^2.26.0",
+		"copy-webpack-plugin": "^5.1.1",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"mocha": "^7.1.1",
@@ -49,7 +133,8 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
-		"ngrx-uml": "^0.1.0",
+		"ngrx-uml": "file:../ngrx-uml",
+		"rxjs": "^6.5.5",
 		"typescript": "^3.8.3"
 	}
 }
