@@ -14,6 +14,8 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
     statusBar.text = '$(sync~spin) Generating diagrams';
     statusBar.show();
 
+    const inputConfig = vscode.workspace.getConfiguration('ngrxUml').get('input') as InputConfiguration;
+
     const withProgressPromise = vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
         title: "Generating",
@@ -35,7 +37,6 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
         return new Promise((resolve) => {
 
             const options = createOptions(workspaceFolder);
-            logger.log('__dirname: ' +__dirname);
             const pathTasks = path.join(__dirname, 'create-diagram-process.js');
 
             forked = fork(pathTasks, [], {
@@ -71,7 +72,7 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
                 });
             }
 
-            forked.send({ baseDir: workspaceFolder, options });
+            forked.send({ options, filesPattern: inputConfig.includeFiles });
 
         }).catch((err) => {
             logger.log('err:' + err);
@@ -83,11 +84,16 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
 }
 
 
-function createOptions(baseDir: string) {
+function createOptions(baseDir: string): GeneratorOptions {
     const config = vscode.workspace.getConfiguration('ngrxUml');
+
     const inputConfig = config.get('input') as InputConfiguration;
     const outputConfig = config.get('output') as OutputConfiguration;
     const generalConfig = config.get('general') as GeneralConfiguration;
+
+    if (!baseDir.endsWith('/')) {
+        baseDir += '/';
+    }
 
     const options: GeneratorOptions = {
         baseDir,
@@ -103,5 +109,6 @@ function createOptions(baseDir: string) {
         logLevel: generalConfig.logLevel as any,
         clickableLinks: generalConfig.clickableLinks,
     };
+
     return options;
 }
