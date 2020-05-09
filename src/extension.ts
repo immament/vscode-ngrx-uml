@@ -8,7 +8,6 @@ import { getWorkspaceFolder } from './utils/workspace';
 export function activate(context: vscode.ExtensionContext) {
 	logger.log('Extension "ngrx-uml" is now active!');
 
-
 	const generateCommandId = 'ngrx-uml.diagram';
 
 	const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);

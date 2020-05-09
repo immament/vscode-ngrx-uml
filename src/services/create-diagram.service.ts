@@ -1,6 +1,6 @@
 import { ChildProcess, fork } from 'child_process';
 import { GeneratorOptions } from 'ngrx-uml';
-import path from 'path';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 import {

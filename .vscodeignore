@@ -1,6 +1,5 @@
 .vscode/**
 .vscode-test/**
-out/test/**
 src/**
 .gitignore
 vsc-extension-quickstart.md
@@ -8,8 +7,10 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+*.yml
 
 node_modules
+# !node_modules/ngrx-uml
 out/
 src/
 tsconfig.json
