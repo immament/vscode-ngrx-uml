@@ -20,9 +20,10 @@
 	"main": "./dist/extension.js",
 	"scripts": {
 		"compile": "tsc -p ./",
+		"pre-run": "npm run compile && npm run webpack",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run webpack && npm run lint",
+		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
 		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export async function getWorkspaceFolder() {
+export async function getWorkspaceFolder(): Promise<vscode.WorkspaceFolder | undefined> {
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders && workspaceFolders.length > 0) {
@@ -14,13 +14,15 @@ export async function getWorkspaceFolder() {
         if (!workspaceFolder) {
             workspaceFolder = await chooseWorkspaceFolder(workspaceFolders);
         }
-       
+
         return workspaceFolder;
     } else {
+
         vscode.window.showWarningMessage('No folders in workspace.');
+        return;
     }
 }
 
 function chooseWorkspaceFolder(workspaceFolders: readonly vscode.WorkspaceFolder[]) {
-	return workspaceFolders.length === 1 ? workspaceFolders[0] : vscode.window.showWorkspaceFolderPick();
+    return workspaceFolders.length === 1 ? workspaceFolders[0] : vscode.window.showWorkspaceFolderPick();
 }
