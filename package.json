@@ -2,7 +2,7 @@
 	"name": "vscode-ngrx-uml",
 	"displayName": "ngrx-uml",
 	"description": "Generate ngrx/state diagram",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "immament",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -10,6 +10,7 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "assets/ngrx-uml-icon.png",
 	"repository": {
 		"url": "https://github.com/immament/vscode-ngrx-uml"
 	},
@@ -141,7 +142,7 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
-		"ngrx-uml": "file:../ngrx-uml",
+		"ngrx-uml": "^1.0.0",
 		"rxjs": "^6.5.5",
 		"typescript": "^3.8.3"
 	}
