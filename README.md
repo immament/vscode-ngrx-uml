@@ -1,4 +1,4 @@
-# ngrx-uml
+# Ngrx Uml
 
 ## Features
 
@@ -14,7 +14,7 @@ Searches for:
 
 
 ### `NgrxUml.Diagram` command
-![Generate diagram command](docs/assets/vscode-ngrx-uml.gif)
+![Generate diagram command](assets/examples/vscode-ngrx-uml.gif)
 
 ## Requirements
 
@@ -45,15 +45,15 @@ Generated from source code [ngrx/store example app](https://github.com/ngrx/plat
 
 ### Action diagram (png)
 
-![Action diagram](docs/assets/examples/_Auth-API_Login-Success.png)
+![Action diagram](assets/examples/_Auth-API_Login-Success.png)
 
 ### Auth Reducer diagram (png)
 
-![Reducer diagram](docs/assets/examples/auth.reducer_reducer.png)
+![Reducer diagram](assets/examples/auth.reducer_reducer.png)
 
 ### Action diagram (wsd) 
 
-[Plantuml file](docs/assets/examples/_Auth-API_Login-Success.wsd)
+[Plantuml file](assets/examples/_Auth-API_Login-Success.wsd)
 
 ## Known Issues
 
