@@ -1,6 +1,6 @@
 import { ChildProcess, fork } from 'child_process';
 import { GeneratorOptions } from 'ngrx-uml';
-import path from 'path';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 import {
@@ -19,7 +19,7 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
     const withProgressPromise = vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
         title: "Generating",
-        cancellable: true
+        cancellable: true,
     }, (progress, token) => {
 
         let forked: ChildProcess;
@@ -27,7 +27,7 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
             if (forked) {
                 forked.kill();
             }
-            logger.log("User canceled the long running operation");
+            logger.log("User canceled the running operation");
         });
 
         var progressUpdate = 'Starting up...';
@@ -43,15 +43,15 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
                 silent: true,
                 detached: true
             }).on('error', (err) => {
-                logger.log("\n\t\tERROR: spawn failed! (" + err + ")");
+                logger.log("\n\t\tERROR: fork failed! (" + err + ")");
             }).on('message', (msg) => {
-                logger.log('Message from child: ' + msg);
+                logger.log('Message from fork: ' + msg);
             }).on('exit', async (code, signal) => {
                 logger.log(`exit code:  ${code} signal: ${signal}`);
                 resolve();
                 clearInterval(progressInterval);
                 resetStatusBar(statusBar);
-                const btn = await vscode.window.showInformationMessage('Genereting finished', 'View Report');
+                const btn = await vscode.window.showInformationMessage('Generating finished', 'View Report');
                 if (btn === 'View Report') {
                     outputChannel.show();
                 }
@@ -66,9 +66,9 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
             }
 
             if (forked.stdout) {
-                forked.stdout.on('data', (data) => {
-                    progressUpdate = data.toString('utf8', 0, 50).replace(/[\r\n]/g, ' ');
-                    logger.log('stdout: ' + data);
+                forked.stdout.on('data', (chunk) => {
+                    progressUpdate = chunk.toString('utf8', 0, 120).replace(options.baseDir, ' '); // .replace(/[\r\n]/g, ' ');
+                    logger.log(chunk.toString());
                 });
             }
 
@@ -90,10 +90,6 @@ function createOptions(baseDir: string): GeneratorOptions {
     const inputConfig = config.get('input') as InputConfiguration;
     const outputConfig = config.get('output') as OutputConfiguration;
     const generalConfig = config.get('general') as GeneralConfiguration;
-
-    if (!baseDir.endsWith('/')) {
-        baseDir += '/';
-    }
 
     const options: GeneratorOptions = {
         baseDir,
