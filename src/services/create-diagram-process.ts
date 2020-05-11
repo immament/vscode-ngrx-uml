@@ -7,7 +7,15 @@ process.on('message', (msg: any) => {
 
 async function createActionsDiagramService(filesPattern: string, options: GeneratorOptions): Promise<void> {
     const createActionsDiagramService = new CreateActionsDiagramService(options);
-    await createActionsDiagramService.generateDiagram(filesPattern);
-    console.log('End');
-    process.exit(0);
+    try {
+        await createActionsDiagramService.generateDiagram(filesPattern);
+        console.log('End');
+        process.exit(0);
+    } catch (error) {
+        console.log(error);
+
+        if (process.send) {
+            process.send({ error: error.message || error });
+        }
+    }
 }

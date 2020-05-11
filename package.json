@@ -2,7 +2,7 @@
 	"name": "vscode-ngrx-uml",
 	"displayName": "ngrx-uml",
 	"description": "Generate ngrx/state diagram",
-	"version": "0.9.0",
+	"version": "0.9.1",
 	"publisher": "immament",
 	"engines": {
 		"vscode": "^1.44.0"
