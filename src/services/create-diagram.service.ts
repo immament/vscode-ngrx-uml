@@ -44,17 +44,29 @@ export function generateWithProgress(workspaceFolder: string, statusBar: vscode.
                 detached: true
             }).on('error', (err) => {
                 logger.log("\n\t\tERROR: fork failed! (" + err + ")");
-            }).on('message', (msg) => {
-                logger.log('Message from fork: ' + msg);
+            }).on('message', async (msg: { error: string } | any) => {
+                if (msg.error) {
+                    forked.kill();
+                    const btn = await vscode.window.showErrorMessage('Generating error: ' + msg.error, 'View Report');
+                    if (btn === 'View Report') {
+                        outputChannel.show();
+                    }
+                } else {
+                    logger.log('Message from genereting process: ' + msg);
+                }
             }).on('exit', async (code, signal) => {
                 logger.log(`exit code:  ${code} signal: ${signal}`);
                 resolve();
                 clearInterval(progressInterval);
                 resetStatusBar(statusBar);
-                const btn = await vscode.window.showInformationMessage('Generating finished', 'View Report');
-                if (btn === 'View Report') {
-                    outputChannel.show();
+
+                if (!signal) {
+                    const btn = await vscode.window.showInformationMessage('Generating finished', 'View Report');
+                    if (btn === 'View Report') {
+                        outputChannel.show();
+                    }
                 }
+
             }).on('data', (msg) => {
                 logger.log('data: ' + msg);
             });
