@@ -6,4 +6,5 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* **initial-release**
+* Generate Plant UML diagram from [ngrx/store](https://ngrx.io) project (version >= 7.0).
+* Generate separete diagram for each [Action](https://ngrx.io/guide/store/actions) or/and [Reducer/State](https://ngrx.io/guide/store/reducers).
