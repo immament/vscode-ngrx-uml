@@ -36,12 +36,57 @@
 		"*"
 	],
 	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "state-explorer",
+					"title": "State Explorer",
+					"icon": "assets/images/state-icon.png"
+				}
+			]
+		},
+		"views": {
+			"state-explorer": [
+				{
+					"id": "actionsTree",
+					"name": "Actions"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "ngrx-uml.diagram",
 				"title": "NgrxUml: Diagram"
+			},
+			{
+				"command": "ngrx-uml.refreshTreeView",
+				"title": "NgrxUml: Refresh tree view",
+				"icon": {
+					"light": "assets/images/light/refresh.svg",
+					"dark": "assets/images/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "ngrx-uml.openFile",
+				"title": "NgrxUml: Open File"
 			}
 		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "ngrx-uml.refreshTreeView",
+					"when": "view == actionsTree",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "ngrx-uml.refreshTreeView",
+					"when": "view == actionsTree && viewItem == actions",
+					"group": "inline"
+				}
+			]
+		},
 		"configuration": {
 			"title": "NgrxUml",
 			"properties": {
