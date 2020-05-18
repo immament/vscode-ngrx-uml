@@ -3,6 +3,8 @@ import { Action } from 'ngrx-uml/dist/lib/actions/models';
 import path from 'path';
 import vscode from 'vscode';
 
+import { OutputConfiguration } from '../models/configuration.model';
+import logger from '../utils/logger';
 import { pathExists } from '../utils/utils';
 
 import { ActionMapper } from './action.mapper';
@@ -18,12 +20,17 @@ export class WorkspaceFolderNode extends TreeNode {
         private readonly actionMapper: ActionMapper
     ) {
         super(label, collapsibleState);
-
-        this.actionsJsonPath = path.join(workspaceFolder.uri.fsPath, 'out/json', 'action-references_Action.json');
+        this.actionsJsonPath = this.getActionJsonPath();
     }
 
+
+    private getActionJsonPath() {
+        const outputConfig = vscode.workspace.getConfiguration('ngrxUml', this.workspaceFolder).get('output') as OutputConfiguration;
+        return path.join(this.workspaceFolder.uri.fsPath, outputConfig.outDir, 'json', 'action-references_Action.json');
+
+    }
     protected getChildrenItems(): TreeNode[] {
-        return this.getActionsFromJson(this.actionsJsonPath);
+        return this.getActionsFromJson();
 
     }
 
@@ -31,11 +38,18 @@ export class WorkspaceFolderNode extends TreeNode {
         return 'Action';
     }
 
+    hasData(): boolean {
 
-    private getActionsFromJson(actionsJsonPath: string): TreeNode[] {
+        const exists = pathExists(this.actionsJsonPath);
+        logger.log(`$pathExists ${this.actionsJsonPath} [${exists}]`);
+        return exists;
+    }
 
-        if (pathExists(actionsJsonPath)) {
-            const actions: Action[] = JSON.parse(fs.readFileSync(actionsJsonPath, 'utf-8'));
+
+    private getActionsFromJson(): TreeNode[] {
+
+        if (this.hasData()) {
+            const actions: Action[] = JSON.parse(fs.readFileSync(this.actionsJsonPath, 'utf-8'));
             return this.actionMapper.mapActions(actions);
         }
         return [];

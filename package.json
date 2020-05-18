@@ -32,7 +32,6 @@
 		"test-compile": "tsc -p ./"
 	},
 	"activationEvents": [
-		"onCommand:ngrx-uml.diagram",
 		"*"
 	],
 	"contributes": {
@@ -53,9 +52,15 @@
 				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "actionsTree",
+				"contents": "No workspace folder contains generated data in json format (default directory: 'out').\n[Generate](command:ngrx-uml.generateActionsDiagram)\n[Change settings](command:workbench.action.openSettings?%5B%22ngrxUml%22%5D)"
+			}
+		],
 		"commands": [
 			{
-				"command": "ngrx-uml.diagram",
+				"command": "ngrx-uml.generateActionsDiagram",
 				"title": "NgrxUml: Diagram"
 			},
 			{
@@ -136,8 +141,8 @@
 				},
 				"ngrxUml.output.generateJsonFiles": {
 					"type": "boolean",
-					"default": false,
-					"description": "Generate intermediate files to json."
+					"default": true,
+					"description": "Generate intermediate files to json. It must be enabled for state tree view to work."
 				},
 				"ngrxUml.output.generateWsdFiles": {
 					"type": "boolean",

@@ -5,9 +5,16 @@ export const outputChannel: OutputChannel = window.createOutputChannel('NgrxUml'
 
 export class Logger {
 
-    log(value: any) {
-        outputChannel.appendLine(value);
-        console.log('log', value);
+    log(value: any, ...optionalParams: any[]): void {
+
+        if(optionalParams.length){ 
+            outputChannel.appendLine(`${value} ${optionalParams.join(' ')}`);
+            console.log( value, optionalParams);
+        } else {
+            outputChannel.appendLine(value);
+            console.log('log:', value);
+        }
+
     }
 }
 

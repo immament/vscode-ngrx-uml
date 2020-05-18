@@ -27,19 +27,19 @@ export class ActionsTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     }
 
     getChildren(element?: TreeNode | undefined): vscode.ProviderResult<TreeNode[]> {
-        console.log('getChildren:' + element?.label);
         if (element) {
             return Promise.resolve(element.getChildren());
         }
 
         return Promise.resolve(this.workspaceNodes());
-
     }
 
 
     private workspaceNodes(): TreeNode[] {
         if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-            return vscode.workspace.workspaceFolders.map(folder => new WorkspaceFolderNode(folder.name, vscode.TreeItemCollapsibleState.Expanded, folder, this.actionMapper));
+            return vscode.workspace.workspaceFolders
+                .map(folder => new WorkspaceFolderNode(folder.name, vscode.TreeItemCollapsibleState.Expanded, folder, this.actionMapper))
+                .filter(wfn => wfn.hasData());
         }
         return [];
     }

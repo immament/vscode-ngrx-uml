@@ -1,122 +1,122 @@
-import { ChildProcess, fork } from 'child_process';
 import { GeneratorOptions } from 'ngrx-uml';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import path from 'path';
+import { Subscription } from 'rxjs';
+import vscode from 'vscode';
 
-import {
-    GeneralConfiguration, InputConfiguration, OutputConfiguration
-} from '../models/configuration.model';
+import { InputConfiguration } from '../models/configuration.model';
 import logger, { outputChannel } from '../utils/logger';
 import { resetStatusBar } from '../utils/status-bar';
 
-export function generateWithProgress(workspaceFolder: string, statusBar: vscode.StatusBarItem) {
+import { GeneretingProcessService } from './genereting-process.service';
+import { NgrxUmlConfigService } from './ngrx-uml-config.service';
+import { ProgressUpdater } from './progress-updater';
 
-    statusBar.text = '$(sync~spin) Generating diagrams';
-    statusBar.show();
+export class CreateDiagramService {
+    private configService: NgrxUmlConfigService;
+    private inputConfig: InputConfiguration;
 
-    const inputConfig = vscode.workspace.getConfiguration('ngrxUml').get('input') as InputConfiguration;
+    constructor(
+        private readonly workspaceFolder: vscode.WorkspaceFolder,
+        private readonly statusBar?: vscode.StatusBarItem
+    ) {
 
-    const withProgressPromise = vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: "Generating",
-        cancellable: true,
-    }, (progress, token) => {
+        this.showRunningStateInStatus();
 
-        let forked: ChildProcess;
-        token.onCancellationRequested(() => {
-            if (forked) {
-                forked.kill();
+        this.configService = new NgrxUmlConfigService(this.workspaceFolder);
+        this.inputConfig = this.configService.getInputConfig();
+    }
+
+    public generateWithProgress() {
+
+        return vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: "Generating",
+            cancellable: true,
+        }, (progress, cancellationToken) => this.generatingTask(progress, cancellationToken))
+        .then(async (value: any) => {
+            if (!value.signal) {
+                const btn = await vscode.window.showInformationMessage('Generating finished', 'View Report');
+                if (btn === 'View Report') {
+                    outputChannel.show();
+                }
+            }
+        }, async (err) => {
+            logger.log('err: ' + err);
+            const btn = await vscode.window.showErrorMessage('Generating error: ' + err, 'View Report');
+            if (btn === 'View Report') {
+                outputChannel.show();
+            }
+            throw err;
+        });
+    }
+
+    private generatingTask(
+        progress: vscode.Progress<{ message?: string | undefined; increment?: number | undefined; }>,
+        cancellationToken: vscode.CancellationToken
+    ) {
+        let generetingProcessService: GeneretingProcessService;
+        const progressUpdater = new ProgressUpdater(progress);
+
+        cancellationToken.onCancellationRequested(() => {
+            if (generetingProcessService) {
+                generetingProcessService.cancel();
             }
             logger.log("User canceled the running operation");
         });
 
-        var progressUpdate = 'Starting up...';
+        const subscriptions: Subscription[] = [];
 
-        const progressInterval = setInterval(() => progress.report({ message: progressUpdate }), 500);
-
-        return new Promise((resolve) => {
-
-            const options = createOptions(workspaceFolder);
-            const pathTasks = path.join(__dirname, 'create-diagram-process.js');
-
-            forked = fork(pathTasks, [], {
-                silent: true,
-                detached: true
-            }).on('error', (err) => {
-                logger.log("\n\t\tERROR: fork failed! (" + err + ")");
-            }).on('message', async (msg: { error: string } | any) => {
-                if (msg.error) {
-                    forked.kill();
-                    const btn = await vscode.window.showErrorMessage('Generating error: ' + msg.error, 'View Report');
-                    if (btn === 'View Report') {
-                        outputChannel.show();
-                    }
-                } else {
-                    logger.log('Message from genereting process: ' + msg);
-                }
-            }).on('exit', async (code, signal) => {
-                logger.log(`exit code:  ${code} signal: ${signal}`);
-                resolve();
-                clearInterval(progressInterval);
-                resetStatusBar(statusBar);
-
-                if (!signal) {
-                    const btn = await vscode.window.showInformationMessage('Generating finished', 'View Report');
-                    if (btn === 'View Report') {
-                        outputChannel.show();
-                    }
-                }
-
-            }).on('data', (msg) => {
-                logger.log('data: ' + msg);
-            });
-
-            if (forked.stderr) {
-                forked.stderr.on('data', (data) => {
-                    logger.log('stderr: ' + data);
-                });
+        const promise =  new Promise((resolve, reject) => {
+            generetingProcessService = new GeneretingProcessService(
+                this.createGeneratorOptions(),
+                this.inputConfig.includeFiles,
+                resolve,
+                reject
+            );
+            subscriptions.push(generetingProcessService.progress.subscribe(msg => progressUpdater.update(msg)));
+            generetingProcessService.run();
+        }).finally(() => {
+            resetStatusBar(this.statusBar);
+            progressUpdater.dispose();
+            for(var subs of subscriptions) {
+                subs.unsubscribe();
             }
-
-            if (forked.stdout) {
-                forked.stdout.on('data', (chunk) => {
-                    progressUpdate = chunk.toString('utf8', 0, 120).replace(options.baseDir, ' '); // .replace(/[\r\n]/g, ' ');
-                    logger.log(chunk.toString());
-                });
-            }
-
-            forked.send({ options, filesPattern: inputConfig.includeFiles });
-
-        }).catch((err) => {
-            logger.log('err:' + err);
-            throw err;
         });
 
-    });
-    return withProgressPromise;
+        return promise;
+    }
+
+    private showRunningStateInStatus() {
+        if (this.statusBar) {
+            this.statusBar.text = '$(sync~spin) Generating diagrams';
+            this.statusBar.show();
+        }
+    }
+
+    private createGeneratorOptions(): GeneratorOptions {
+        const baseDir = this.workspaceFolder.uri.fsPath;
+
+        const inputConfig = this.configService.getInputConfig();
+        const outputConfig = this.configService.getOutputConfig();
+        const generalConfig = this.configService.getGeneralConfig();
+
+        const options: GeneratorOptions = {
+            baseDir,
+            ignorePattern: inputConfig.ignoreFiles,
+            tsConfigFileName: inputConfig.tsConfigFile,
+
+            outDir: path.join(baseDir, outputConfig.outDir),
+            generateImages: outputConfig.generateDiagramImages,
+            imageFormat: outputConfig.generateDiagramImages ? outputConfig.imageFormat : 'off',
+            saveConvertResultToJson: outputConfig.generateJsonFiles,
+            saveWsd: outputConfig.generateWsdFiles,
+
+            logLevel: generalConfig.logLevel as any,
+            clickableLinks: generalConfig.clickableLinks,
+        };
+
+        return options;
+    }
+
 }
 
-
-function createOptions(baseDir: string): GeneratorOptions {
-    const config = vscode.workspace.getConfiguration('ngrxUml');
-
-    const inputConfig = config.get('input') as InputConfiguration;
-    const outputConfig = config.get('output') as OutputConfiguration;
-    const generalConfig = config.get('general') as GeneralConfiguration;
-
-    const options: GeneratorOptions = {
-        baseDir,
-        ignorePattern: inputConfig.ignoreFiles,
-        tsConfigFileName: inputConfig.tsConfigFile,
-
-        outDir: path.join(baseDir, outputConfig.outDir),
-        generateImages: outputConfig.generateDiagramImages,
-        imageFormat: outputConfig.generateDiagramImages ? outputConfig.imageFormat : 'off',
-        saveConvertResultToJson: outputConfig.generateJsonFiles,
-        saveWsd: outputConfig.generateWsdFiles,
-
-        logLevel: generalConfig.logLevel as any,
-        clickableLinks: generalConfig.clickableLinks,
-    };
-
-    return options;
-}
