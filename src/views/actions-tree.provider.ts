@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+
 import vscode from 'vscode';
 
 import { ActionMapper } from './action.mapper';
@@ -7,7 +6,6 @@ import { TreeNode } from './tree-item.model';
 import { WorkspaceFolderNode } from './workspace-folder-node.model';
 
 export class ActionsTreeProvider implements vscode.TreeDataProvider<TreeNode> {
-
 
     private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | undefined> = new vscode.EventEmitter<TreeNode | undefined>();
     readonly onDidChangeTreeData: vscode.Event<TreeNode | undefined> = this._onDidChangeTreeData.event;
@@ -19,7 +17,7 @@ export class ActionsTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     }
 
     refresh(): void {
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
 
     getTreeItem(element: TreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
