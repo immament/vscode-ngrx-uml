@@ -9,7 +9,7 @@ const config = {
   target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 
   entry: {
-    extension: ['./src/extension.ts'], // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+    "extension": ['./src/extension.ts'], // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     "create-diagram-process": ["./src/services/create-diagram-process.ts"]
   },
   output: {
