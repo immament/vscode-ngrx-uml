@@ -9,7 +9,7 @@ export class Logger {
 
         if(optionalParams.length){ 
             outputChannel.appendLine(`${value} ${optionalParams.join(' ')}`);
-            console.log( value, optionalParams);
+            console.log('log', value, ...optionalParams);
         } else {
             outputChannel.appendLine(value);
             console.log('log:', value);

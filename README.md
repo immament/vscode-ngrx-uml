@@ -1,5 +1,14 @@
 # Ngrx Uml
 
+## Attention
+I currently have time to develop this tool.
+If:
+- you need some functionality
+- something is not working
+- you have a question
+
+please create a [GitHub Issue](https://github.com/immament/vscode-ngrx-uml/issues)
+
 ## Features
 
 ### Generate diagrams
@@ -35,6 +44,7 @@ This extension contributes the following settings:
 * `ngrxUml.input.workspaceFolder` - Default workspace folder
 * `ngrxUml.input.includeFiles` - Glob-like file pattern specifying the filepath for the source files. Relative to baseDir - default:  "**/*.ts"
 * `ngrxUml.input.ignoreFiles` - Glob-like file pattern specifying files to ignore - default:  [ "**/*.spec.ts", "**/node_modules/**"]
+* `ngrxUml.input.baseDir` - Base directory for workspace folder
 * `ngrxUml.input.tsConfigFile` - tsconfig.json file name with relative path from baseDir - default:  "tsconfig.json"
 * `ngrxUml.output.generateDiagramImages` - Generate Diagram images - default:  false
 * `ngrxUml.output.imageFormat` - Generate diagrams in specified format  [  "eps","latex","png","svg","txt"] - default:  "png"

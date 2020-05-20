@@ -94,18 +94,19 @@ export class CreateDiagramService {
     }
 
     private createGeneratorOptions(): GeneratorOptions {
-        const baseDir = this.workspaceFolder.uri.fsPath;
 
         const inputConfig = this.configService.getInputConfig();
         const outputConfig = this.configService.getOutputConfig();
         const generalConfig = this.configService.getGeneralConfig();
 
+        const baseDirForWorkspaceFolder = path.join(this.workspaceFolder.uri.fsPath, inputConfig.baseDir);
+    
         const options: GeneratorOptions = {
-            baseDir,
+            baseDir: baseDirForWorkspaceFolder,
             ignorePattern: inputConfig.ignoreFiles,
             tsConfigFileName: inputConfig.tsConfigFile,
 
-            outDir: path.join(baseDir, outputConfig.outDir),
+            outDir: path.join(baseDirForWorkspaceFolder, outputConfig.outDir),
             generateImages: outputConfig.generateDiagramImages,
             imageFormat: outputConfig.generateDiagramImages ? outputConfig.imageFormat : 'off',
             saveConvertResultToJson: outputConfig.generateJsonFiles,

@@ -102,6 +102,7 @@
 				"ngrxUml.input.includeFiles": {
 					"type": "string",
 					"default": "**/*.ts",
+					"scope": "resource",
 					"description": "Glob-like file pattern specifying the filepath for the source files. Relative to baseDir."
 				},
 				"ngrxUml.input.ignoreFiles": {
@@ -110,16 +111,25 @@
 						"**/*.spec.ts",
 						"**/node_modules/**"
 					],
+					"scope": "resource",
 					"description": "Glob-like file pattern specifying files to ignore."
 				},
 				"ngrxUml.input.tsConfigFile": {
 					"type": "string",
 					"default": "tsconfig.json",
+					"scope": "resource",
 					"description": "tsconfig.json file name with relative path from baseDir."
+				},
+				"ngrxUml.input.baseDir": {
+					"type": "string",
+					"default": "",
+					"scope": "resource",
+					"description": "Base directory for workspace folder."
 				},
 				"ngrxUml.output.generateDiagramImages": {
 					"type": "boolean",
 					"default": false,
+					"scope": "resource",
 					"description": "Generate Diagram images."
 				},
 				"ngrxUml.output.imageFormat": {
@@ -132,21 +142,25 @@
 						"txt"
 					],
 					"default": "png",
+					"scope": "resource",
 					"description": "Generate Diagram images."
 				},
 				"ngrxUml.output.outDir": {
 					"type": "string",
 					"default": "out",
+					"scope": "resource",
 					"description": "Redirect output structure to the directory."
 				},
 				"ngrxUml.output.generateJsonFiles": {
 					"type": "boolean",
 					"default": true,
+					"scope": "resource",
 					"description": "Generate intermediate files to json. It must be enabled for state tree view to work."
 				},
 				"ngrxUml.output.generateWsdFiles": {
 					"type": "boolean",
 					"default": true,
+					"scope": "resource",
 					"description": "Generate plant uml file (.wsd)."
 				},
 				"ngrxUml.general.clickableLinks": {
