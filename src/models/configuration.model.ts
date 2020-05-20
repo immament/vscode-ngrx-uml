@@ -13,6 +13,7 @@ export interface InputConfiguration {
     includeFiles: string;
     ignoreFiles: string[];
     tsConfigFile: string;
+    baseDir: string;
 }
 
 export interface GeneralConfiguration {

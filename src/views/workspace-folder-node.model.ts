@@ -3,7 +3,7 @@ import { Action } from 'ngrx-uml/dist/lib/actions/models';
 import path from 'path';
 import vscode from 'vscode';
 
-import { OutputConfiguration } from '../models/configuration.model';
+import { NgrxUmlConfigService } from '../services/ngrx-uml-config.service';
 import logger from '../utils/logger';
 import { pathExists } from '../utils/utils';
 
@@ -12,23 +12,27 @@ import { TreeNode } from './tree-item.model';
 
 export class WorkspaceFolderNode extends TreeNode {
     private readonly actionsJsonPath: string;
-
+    private readonly configService: NgrxUmlConfigService;
     constructor(
         label: string,
         collapsibleState: vscode.TreeItemCollapsibleState,
         public readonly workspaceFolder: vscode.WorkspaceFolder,
-        private readonly actionMapper: ActionMapper
+        private readonly actionMapper: ActionMapper,
+        
     ) {
+
         super(label, collapsibleState);
+        this.configService = new NgrxUmlConfigService(workspaceFolder);
         this.actionsJsonPath = this.getActionJsonPath();
     }
 
 
     private getActionJsonPath() {
-        const outputConfig = vscode.workspace.getConfiguration('ngrxUml', this.workspaceFolder).get('output') as OutputConfiguration;
-        return path.join(this.workspaceFolder.uri.fsPath, outputConfig.outDir, 'json', 'action-references_Action.json');
-
+        const inputConfig = this.configService.getInputConfig();
+        const outputConfig = this.configService.getOutputConfig();
+        return path.join(this.workspaceFolder.uri.fsPath, inputConfig.baseDir, outputConfig.outDir, 'json', 'action-references_Action.json');
     }
+
     protected getChildrenItems(): TreeNode[] {
         return this.getActionsFromJson();
 
