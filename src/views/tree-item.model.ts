@@ -3,8 +3,6 @@ import vscode from 'vscode';
 
 export class TreeNode extends vscode.TreeItem {
 
-
-
     constructor(
         label: string,
         collapsibleState: vscode.TreeItemCollapsibleState,

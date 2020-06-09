@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Action } from 'ngrx-uml/dist/lib/actions/models';
+import { Action } from 'ngrx-uml/dist/lib/impl/models';
 import path from 'path';
 import vscode from 'vscode';
 
@@ -54,7 +54,7 @@ export class WorkspaceFolderNode extends TreeNode {
 
         if (this.hasData()) {
             const actions: Action[] = JSON.parse(fs.readFileSync(this.actionsJsonPath, 'utf-8'));
-            return this.actionMapper.mapActions(actions);
+            return this.actionMapper.mapItems(actions);
         }
         return [];
 

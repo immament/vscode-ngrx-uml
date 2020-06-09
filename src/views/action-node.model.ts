@@ -1,5 +1,5 @@
-import { ActionReference } from 'ngrx-uml/dist/lib/action-references/models/action-reference.model';
-import { Action } from 'ngrx-uml/dist/lib/actions/models';
+
+import { Action, ActionReference } from 'ngrx-uml/dist/lib/impl/models';
 import path from 'path';
 import vscode, { Uri } from 'vscode';
 
@@ -41,7 +41,7 @@ export class ActionNode extends TreeNode {
                     refs.map((item) => new ActionReferenceNode(item, vscode.TreeItemCollapsibleState.Collapsed))
                 );
             });
-          
+
         }
         return [];
 

@@ -49,6 +49,10 @@
 				{
 					"id": "actionsTree",
 					"name": "Actions"
+				},
+				{
+					"id": "modulesExplorer",
+					"name": "Modules Explorer"
 				}
 			]
 		},
@@ -73,6 +77,10 @@
 			},
 			{
 				"command": "ngrx-uml.openFile",
+				"title": "NgrxUml: Open File"
+			},
+			{
+				"command": "ngrx-uml.openFileWithOffset",
 				"title": "NgrxUml: Open File"
 			}
 		],
@@ -206,7 +214,7 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
-		"ngrx-uml": "^1.0.0",
+		"ngrx-uml": "file:../ngrx-uml",
 		"rxjs": "^6.5.5",
 		"typescript": "^3.9.2"
 	}

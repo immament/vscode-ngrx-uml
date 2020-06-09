@@ -1,15 +1,20 @@
-import { Action } from 'ngrx-uml/dist/lib/actions/models';
+import { Action } from 'ngrx-uml/dist/lib/impl/models';
 import vscode from 'vscode';
 
 import { ActionNode } from './action-node.model';
 
-export class ActionMapper {
+export interface Mapper<S, R> {
+    map(item: S): R;
+    mapItems(items: S[]): R[];
+}
+
+export class ActionMapper implements Mapper<Action, ActionNode> {
 
     map(action: Action) {
         return new ActionNode(action.name, action, vscode.TreeItemCollapsibleState.Collapsed);
     }
 
-    mapActions(actions: Action[]) {
+    mapItems(actions: Action[]) {
         return actions.map(a => this.map(a));
     }
 }
