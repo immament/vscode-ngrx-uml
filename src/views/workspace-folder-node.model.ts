@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Action } from 'ngrx-uml/dist/lib/actions/models';
+import { Action } from 'ngrx-uml/dist/lib/impl/models';
 import path from 'path';
 import vscode from 'vscode';
 
@@ -18,7 +18,7 @@ export class WorkspaceFolderNode extends TreeNode {
         collapsibleState: vscode.TreeItemCollapsibleState,
         public readonly workspaceFolder: vscode.WorkspaceFolder,
         private readonly actionMapper: ActionMapper,
-        
+
     ) {
 
         super(label, collapsibleState);
@@ -53,11 +53,19 @@ export class WorkspaceFolderNode extends TreeNode {
     private getActionsFromJson(): TreeNode[] {
 
         if (this.hasData()) {
-            const actions: Action[] = JSON.parse(fs.readFileSync(this.actionsJsonPath, 'utf-8'));
-            return this.actionMapper.mapActions(actions);
+            const actionsData: { data: Action[] } = JSON.parse(fs.readFileSync(this.actionsJsonPath, 'utf-8'));
+            if (actionsData?.data) {
+                return this.actionMapper.mapActions(actionsData.data);
+            } else if(this.isNgrxUml_1_0_0_Data(actionsData)) { // Compatibility to ngrx-uml v.1.0.0
+                return this.actionMapper.mapActions(actionsData);
+            }
         }
         return [];
 
+    }
+
+    private isNgrxUml_1_0_0_Data(data: any): data is Action[] {
+        return data && Array.isArray(data);
     }
 
     contextValue = 'workspace-folder';

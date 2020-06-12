@@ -206,7 +206,7 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
-		"ngrx-uml": "^1.0.0",
+		"ngrx-uml": "^1.0.1",
 		"rxjs": "^6.5.5",
 		"typescript": "^3.9.2"
 	}

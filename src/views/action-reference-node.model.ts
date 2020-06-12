@@ -1,5 +1,5 @@
 
-import { ActionReference } from 'ngrx-uml/dist/lib/action-references/models/action-reference.model';
+import { ActionReference } from 'ngrx-uml/dist/lib/impl/models';
 import path from 'path';
 import vscode from 'vscode';
 
