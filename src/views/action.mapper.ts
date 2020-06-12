@@ -1,4 +1,4 @@
-import { Action } from 'ngrx-uml/dist/lib/actions/models';
+import { Action } from 'ngrx-uml/dist/lib/impl/models';
 import vscode from 'vscode';
 
 import { ActionNode } from './action-node.model';
